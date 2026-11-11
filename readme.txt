@@ -49,9 +49,9 @@ I consulted with a few classmates about the estimated duration of how long it wo
 
 5. Did you add a bonus feature to your submission? If so, what is it and how should we see it?
 
-- Multiple users/sessions: The real webserver stores each user's access and refresh tokens in an express-session session instead of a shared tokens.json file. Test it by opening a second private browser window and log in. The video file "A3_EC_Multi-Sessions_Web Playback.mp4" shows this.
+- Multiple users/sessions: The real webserver stores each user's access and refresh tokens in an express-session session instead of a shared tokens.json file. Test it by opening a second private browser window and log in. The video file "A3_EC_Multi-Sessions_Web -layback.mp4" shows this.
 
-- Spotify Web Playback SDK: Plays Spotify tracks via the web playback SDK. Test it by opening any track, "Connect Player", and then "Play". The video file "A3_EC_Multi-Sessions_Web Playback.mp4" shows this.
+- Spotify Web Playback SDK: Plays Spotify tracks via the web playback SDK. Test it by opening any track, "Connect Player", and then "Play". The video file "A3_EC_Multi-Sessions_Web-Playback.mp4" shows this.
 
 Spotify Premium and Spotify developer app are required.
 
