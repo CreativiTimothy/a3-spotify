@@ -12,18 +12,60 @@ import { Popularity } from '../data/popularity';
 export class SpotifyService {
     expressBaseUrl: string = 'http://127.0.0.1:8888';
 
-    /* false: Canvas dummy server. true: real Spotify webserver. */
-    useSpotifySession: boolean = true;
+    /* Automatic server detection result. */
+    private useSpotifySession: boolean | null = null;
+    private serverDetectionPromise: Promise<boolean> | null = null;
 
     constructor(private http: HttpClient) {
     }
 
-    private sendRequestToExpress(endpoint: string): Promise<any> {
-        const uri = this.expressBaseUrl + endpoint;
+    private detectSpotifySession(): Promise<boolean> {
+        if (this.serverDetectionPromise !== null) {
+            return this.serverDetectionPromise;
+        }
 
-        return firstValueFrom(this.http.get(uri, {
-            withCredentials: this.useSpotifySession
-        }));
+        /*
+         * Probe without credentials. The untouched dummy server returns 404
+         * because /playback-token is absent. The real server returns a
+         * non-404 authentication response before login or 200 after login.
+         */
+        this.serverDetectionPromise = firstValueFrom(
+            this.http.get(this.expressBaseUrl + '/playback-token')
+        )
+            .then(() => {
+                this.useSpotifySession = true;
+                return true;
+            })
+            .catch((error) => {
+                if (error.status === 404) {
+                    this.useSpotifySession = false;
+                    return false;
+                }
+
+                if ([400, 401, 403, 500].indexOf(error.status) !== -1) {
+                    this.useSpotifySession = true;
+                    return true;
+                }
+
+                this.serverDetectionPromise = null;
+                return Promise.reject(error);
+            });
+
+        return this.serverDetectionPromise;
+    }
+
+    isRealSpotifyServer(): Promise<boolean> {
+        return this.detectSpotifySession();
+    }
+
+    private sendRequestToExpress(endpoint: string): Promise<any> {
+        return this.detectSpotifySession().then((usesSession) => {
+            const uri = this.expressBaseUrl + endpoint;
+
+            return firstValueFrom(this.http.get(uri, {
+                withCredentials: usesSession
+            }));
+        });
     }
 
     /*
