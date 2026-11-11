@@ -1,3 +1,2 @@
-table {
-	color: var(--dark);
-}
+table { color: var(--dark); }
+a { font-weight: 700; }

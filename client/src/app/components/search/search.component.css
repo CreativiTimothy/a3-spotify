@@ -1,7 +1,3 @@
-input {
-	margin: 10px;
-}
-
-select {
-	margin: 10px;
-}
+input, select { margin: 10px 0; }
+.search-controls { display: grid; grid-template-columns: minmax(0, 1fr) 9rem auto; gap: 0.5rem; align-items: center; }
+@media (max-width: 576px) { .search-controls { grid-template-columns: 1fr; } }

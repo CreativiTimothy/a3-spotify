@@ -10,6 +10,7 @@ client/.angular
 
 # dependencies
 client/node_modules
+dummy_webserver/node_modules
 webserver/node_modules
 
 # IDEs and editors
@@ -42,5 +43,7 @@ testem.log
 *.DS_Store*
 Thumbs.db
 
+# Webserver Tokens
 webserver/tokens.json
 webserver/client_secret.json
+webserver/.env

@@ -1,0 +1,3 @@
+a { display: block; color: white; }
+img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 0.5rem; }
+.carousel-caption { background: rgba(0, 0, 0, 0.72); border-radius: 0.4rem; padding: 0.5rem; }

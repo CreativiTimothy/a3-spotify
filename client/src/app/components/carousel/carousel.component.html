@@ -1,21 +1,19 @@
-@if(resources) {
-<div [id]="carouselId" class="carousel slide carousel-fade">
-  <div class="carousel-inner">
-    <!--TODO: edit @for to populate carousel with carousel-card components.-->
-    <!--carousel-card can bind a single resource as an Input.-->
-    <!--"let first=$first" sets the "first" variable to be true for the first card in the carousel. The [ngClass] assigns the active property to it-->
-    <!--https://angular.dev/api/core/@for-->
-    <!--@for(; let first=$first) {
-      <app-carousel-card class="carousel-item" [class.active]="first"></app-carousel-card>
-    }-->
-  </div>
-  <a class="carousel-control-prev" [attr.data-bs-target]="carouselIdForBinding" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </a>
-  <a class="carousel-control-next" [attr.data-bs-target]="carouselIdForBinding" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </a>
+@if (resources.length > 0) {
+<div [id]="carouselId" class="carousel slide" data-bs-ride="false">
+    <div class="carousel-inner">
+        @for (resource of resources; track resource.id; let first = $first) {
+            <div class="carousel-item" [class.active]="first">
+                <app-carousel-card [resource]="resource"></app-carousel-card>
+            </div>
+        }
+    </div>
+    @if (resources.length > 1) {
+        <button class="carousel-control-prev" type="button" [attr.data-bs-target]="carouselIdForBinding" data-bs-slide="prev" aria-label="Previous result">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" [attr.data-bs-target]="carouselIdForBinding" data-bs-slide="next" aria-label="Next result">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    }
 </div>
 }

@@ -15,6 +15,7 @@ import { CarouselComponent } from './components/carousel/carousel.component';
 import { SearchComponent } from './components/search/search.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { ThermometerComponent } from './components/thermometer/thermometer.component';
+import { SpotifyPlayerComponent } from './components/spotify-player/spotify-player.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ThermometerComponent } from './components/thermometer/thermometer.compo
     CarouselComponent,
     SearchComponent,
     HomePageComponent,
-    ThermometerComponent
+    ThermometerComponent,
+    SpotifyPlayerComponent
   ],
   imports: [
     BrowserModule,

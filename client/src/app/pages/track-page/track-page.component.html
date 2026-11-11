@@ -1,30 +1,18 @@
-<div class="row">
-	@if(track) {
-		<div class="col-sm-6 col-12">
-			<!--TODO: populate with track name-->
-			<h1>???</h1>
-			<p>
-				<!--TODO: link to album page, display album name-->
-				Track on <a>???</a>
-			</p>
-			<div>
-				<!--TODO: loop over track's artists-->
-				<p>
-					<!--TODO: link to artist page, display artist name-->
-					Artist: <a>???</a>
-				</p>
-			</div>
-			<p>
-				<!--TODO: populate with track duration-->
-				Duration: ???
-			</p>
-			<p>
-				<!--TODO: link to track page on spotify, display track name-->
-				<a class="btn btn-light" role="button" target="_blank">Open ??? on Spotify</a>
-			</p>
-		</div>
-		<div class="col-sm-6 col-12">
-			<!--TODO: create a thermometer component with the track's popularity-->
-		</div>
-	}
+@if (track) {
+<div class="row g-4">
+    <div class="col-md-6">
+        <h1>{{ track.name }}</h1>
+        @if (track.album) { <p>Track on <a [routerLink]="['/album', track.album.id]">{{ track.album.name }}</a></p> }
+        <div>
+            @for (artist of track.artists; track artist.id) { <p>Artist: <a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a></p> }
+        </div>
+        <p>Duration: {{ track.durationStr }}</p>
+        <a class="btn btn-light" [href]="track.url" target="_blank" rel="noopener noreferrer">Open {{ track.name }} on Spotify</a>
+    </div>
+    <div class="col-md-6">
+        <app-thermometer label="Popularity" [popularity]="track.popularity"></app-thermometer>
+        <app-spotify-player [spotifyUri]="track.uri"></app-spotify-player>
+    </div>
 </div>
+}
+@if (errorMessage) { <p class="alert alert-warning">{{ errorMessage }}</p> }

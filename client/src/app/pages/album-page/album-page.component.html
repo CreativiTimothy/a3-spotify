@@ -1,24 +1,17 @@
-@if(album) {
-	<div class="row">
-		<div class="col-12 col-sm-6">
-			<!--TODO: populate with album name-->
-			<h1>???</h1>
-			<!--TODO: set src to album image URL-->
-			<img id="albumImg">
-			<!--TODO: add thermometer with album's popularity -->
-			<!--TODO: use @for to loop over album artists-->
-			<p>
-				<!--TODO: link to artist page, display artist name-->
-				Artist: <a>???</a>
-			</p>
-			<p>
-				<!--TODO: link to album page on spotify, display album name-->
-				<a class="btn btn-light" role="button" target="_blank" >Open ??? on Spotify</a>
-			</p>
-		</div>
-		<div class="col-12 col-sm-6">
-			<h3>Album Tracks</h3>
-			<!--TODO: display the track list for the album. Hide the artist and album columns because they are redundant on this page.-->
-		</div>
-	</div>
+@if (album) {
+<div class="row g-4">
+    <div class="col-md-5"><img id="albumImg" [src]="album.imageURL" [alt]="album.name"></div>
+    <div class="col-md-7">
+        <h1>{{ album.name }}</h1>
+        <div>
+            @for (artist of album.artists; track artist.id; let first = $first) {
+                @if (!first) {, }<a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a>
+            }
+        </div>
+        <app-thermometer label="Popularity" [popularity]="album.popularity"></app-thermometer>
+        <a class="btn btn-light" [href]="album.url" target="_blank" rel="noopener noreferrer">Open {{ album.name }} on Spotify</a>
+    </div>
+</div>
+<section class="mt-4"><h2>Tracks</h2><app-track-list [tracks]="tracks" [hideArtist]="true" [hideAlbum]="true"></app-track-list></section>
 }
+@if (errorMessage) { <p class="alert alert-warning">{{ errorMessage }}</p> }

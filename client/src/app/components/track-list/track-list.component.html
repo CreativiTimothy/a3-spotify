@@ -1,32 +1,20 @@
-@if(tracks) {
-	<table class="table table-sm table-light table-striped">
-		<thead>
-			<tr>
-				<th scope="col">#</th>
-				<th scope="col">Track</th>
-				<th scope="col">Duration</th>
-				<!--TODO: Use @if to hide if hideArtist is true-->
-				<th scope="col">Primary Artist</th>
-				<!--TODO: Use @if to hide if hideAlbum is true-->
-				<th scope="col">Album</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!--TODO: Use @for to loop over tracks-->
-			<tr>
-				<!--TODO: Populate with row index (start with 1!)-->
-				<td>???</td>
-				<td>
-					<!--TODO: link to the endpoint for that track, display the track's name-->
-					<a>???</a>
-				</td>
-				<!--TODO: display the track's duration-->
-				<td>???</td>
-				<!--TODO: Use @if to hide if hideArtist is true; link to the first artist's endpoint and display the first artist's name-->
-				<td><a></a></td>
-				<!--TODO: Use @if to hide if hideAlbum is true; link to the album's endpoint and display the album's name-->
-				<td><a></a></td>
-			</tr>
-		</tbody>
-	</table>
-}
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+    <thead><tr><th scope="col">#</th><th scope="col">Track</th><th scope="col">Duration</th>@if (!hideArtist) {<th scope="col">Primary Artist</th>}@if (!hideAlbum) {<th scope="col">Album</th>}</tr></thead>
+    <tbody>
+        @for (track of tracks; track track.id; let index = $index) {
+        <tr>
+            <th scope="row">{{ index + 1 }}</th>
+            <td><a [routerLink]="['/track', track.id]">{{ track.name }}</a></td>
+            <td>{{ track.durationStr }}</td>
+            @if (!hideArtist) {
+                <td>@if (track.artists.length > 0) {<a [routerLink]="['/artist', track.artists[0].id]">{{ track.artists[0].name }}</a>} @else {Unknown Artist}</td>
+            }
+            @if (!hideAlbum) {
+                <td>@if (track.album) {<a [routerLink]="['/album', track.album.id]">{{ track.album.name }}</a>} @else {Not provided}</td>
+            }
+        </tr>
+        }
+    </tbody>
+</table>
+</div>

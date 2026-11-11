@@ -1,77 +1,228 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ArtistData } from '../data/artist-data';
 import { AlbumData } from '../data/album-data';
 import { TrackData } from '../data/track-data';
 import { ResourceData } from '../data/resource-data';
 import { ProfileData } from '../data/profile-data';
+import { Popularity } from '../data/popularity';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SpotifyService {
-	expressBaseUrl:string = 'http://127.0.0.1:8888';
+    expressBaseUrl: string = 'http://127.0.0.1:8888';
 
-  constructor(private http:HttpClient) { }
+    /* false: instructor dummy server. true: real Spotify webserver. */
+    useSpotifySession: boolean = true;
 
-  private sendRequestToExpress(endpoint:string):Promise<any> {
-    //TODO: use the injected http Service to make a get request to the Express endpoint and return the response.
-    //Specifically, update the URI according to the base URL for express and the endpoint.
-    var uri:string = "";
+    constructor(private http: HttpClient) {
+    }
 
-    //firstValueFrom generates a Promise for whatever is returned first from the GET request.
-    //You shouldn't need to update this part.
-    return firstValueFrom(this.http.get(uri)).then((response) => {
-      return response;
-    }, (err) => {
-      return err;
-    });
-  }
+    private sendRequestToExpress(endpoint: string): Promise<any> {
+        const uri = this.expressBaseUrl + endpoint;
 
-  aboutMe():Promise<ProfileData> {
-    //This line is sending a request to express, which returns a promise with some data. We're then parsing the data 
-    return this.sendRequestToExpress('/me').then((data) => {
-      return new ProfileData(data);
-    });
-  }
+        return firstValueFrom(this.http.get(uri, {
+            withCredentials: this.useSpotifySession
+        }));
+    }
 
-  searchFor(category:string, resource:string):Promise<ResourceData[]> {
-    //TODO: identify the search endpoint in the express webserver (routes/index.js) and send the request to express.
-    //Make sure you're encoding the resource with encodeURIComponent().
-    //Depending on the category (artist, track, album), return an array of that type of data.
-    //JavaScript's "map" function might be useful for this, but there are other ways of building the array.
-    return null as any;
-  }
+    /*
+     * Spotify's live Development Mode responses can omit fields that exist in
+     * the instructor's saved JSON. Normalizing only the response objects keeps
+     * the supplied data classes unchanged and remains compatible with both servers.
+     */
+    private normalizeArtist(artist: any): any {
+        const source = artist || {};
 
-  getArtist(artistId:string):Promise<ArtistData> {
-    //TODO: use the artist endpoint to make a request to express.
-    //Again, you may need to encode the artistId.
-    return null as any;
-  }
+        return {
+            ...source,
+            id: source.id || 'unknown',
+            name: source.name || 'Unknown Artist',
+            images: Array.isArray(source.images) ? source.images : [],
+            genres: Array.isArray(source.genres) ? source.genres : [],
+            followers: source.followers || { total: 0 },
+            external_urls: source.external_urls || {
+                spotify: source.id
+                    ? 'https://open.spotify.com/artist/' + source.id
+                    : 'https://open.spotify.com/'
+            }
+        };
+    }
 
-  getTopTracksForArtist(artistId:string):Promise<TrackData[]> {
-    //TODO: use the top tracks endpoint to make a request to express.
-    return null as any;
-  }
+    private normalizeAlbum(album: any): any {
+        const source = album || {};
 
-  getAlbumsForArtist(artistId:string):Promise<AlbumData[]> {
-    //TODO: use the albums for an artist endpoint to make a request to express.
-    return null as any;
-  }
+        return {
+            ...source,
+            id: source.id || 'unknown',
+            name: source.name || 'Unknown Album',
+            images: Array.isArray(source.images) ? source.images : [],
+            genres: Array.isArray(source.genres) ? source.genres : [],
+            artists: (source.artists || []).map((artist: any) => {
+                return this.normalizeArtist(artist);
+            }),
+            external_urls: source.external_urls || {
+                spotify: source.id
+                    ? 'https://open.spotify.com/album/' + source.id
+                    : 'https://open.spotify.com/'
+            }
+        };
+    }
 
-  getAlbum(albumId:string):Promise<AlbumData> {
-    //TODO: use the album endpoint to make a request to express.
-    return null as any;
-  }
+    private normalizeTrack(track: any): any {
+        const source = track || {};
 
-  getTracksForAlbum(albumId:string):Promise<TrackData[]> {
-    //TODO: use the tracks for album endpoint to make a request to express.
-    return null as any;
-  }
+        return {
+            ...source,
+            id: source.id || 'unknown',
+            name: source.name || 'Unknown Track',
+            duration_ms: source.duration_ms || 0,
+            artists: (source.artists || []).map((artist: any) => {
+                return this.normalizeArtist(artist);
+            }),
+            album: source.album
+                ? this.normalizeAlbum(source.album)
+                : undefined,
+            uri: source.uri || (source.id
+                ? 'spotify:track:' + source.id
+                : ''),
+            external_urls: source.external_urls || {
+                spotify: source.id
+                    ? 'https://open.spotify.com/track/' + source.id
+                    : 'https://open.spotify.com/'
+            }
+        };
+    }
 
-  getTrack(trackId:string):Promise<TrackData> {
-    //TODO: use the track endpoint to make a request to express.
-    return null as any;
-  }
+    private createArtist(data: any): ArtistData {
+        const artist = new ArtistData(this.normalizeArtist(data));
+
+        // Live Spotify responses may omit these fields.
+        if (artist.followers === undefined || artist.followers === null) {
+            artist.followers = 0;
+        }
+        if (!artist.popularity) {
+            artist.popularity = new Popularity(0);
+        }
+
+        return artist;
+    }
+
+    private createAlbum(data: any): AlbumData {
+        const album = new AlbumData(this.normalizeAlbum(data));
+
+        if (!album.popularity) {
+            album.popularity = new Popularity(0);
+        }
+
+        return album;
+    }
+
+    private createTrack(data: any): TrackData {
+        const normalized = this.normalizeTrack(data);
+        const track = new TrackData(normalized);
+
+        if (!track.popularity) {
+            track.popularity = new Popularity(0);
+        }
+
+        /*
+         * TrackData from the starter project does not declare uri, but the
+         * playback component needs it. Add it to the instance without changing
+         * the instructor-provided model class.
+         */
+        (track as any).uri = normalized.uri;
+
+        return track;
+    }
+
+    aboutMe(): Promise<ProfileData> {
+        return this.sendRequestToExpress('/me').then((data) => {
+            return new ProfileData(data);
+        });
+    }
+
+    searchFor(category: string, resource: string): Promise<ResourceData[]> {
+        const endpoint = '/search/' + category + '/' + encodeURIComponent(resource);
+
+        return this.sendRequestToExpress(endpoint).then((data) => {
+            const resultGroup = data[category + 's'];
+            const items = resultGroup && resultGroup.items
+                ? resultGroup.items
+                : [];
+
+            if (category === 'artist') {
+                return items.map((item: any) => this.createArtist(item));
+            }
+            if (category === 'album') {
+                return items.map((item: any) => this.createAlbum(item));
+            }
+            if (category === 'track') {
+                return items.map((item: any) => this.createTrack(item));
+            }
+            return [];
+        });
+    }
+
+    getArtist(artistId: string): Promise<ArtistData> {
+        return this.sendRequestToExpress(
+            '/artist/' + encodeURIComponent(artistId)
+        ).then((data) => this.createArtist(data));
+    }
+
+    getTopTracksForArtist(artistId: string): Promise<TrackData[]> {
+        return this.sendRequestToExpress(
+            '/artist-top-tracks/' + encodeURIComponent(artistId)
+        ).then((data) => {
+            return (data.tracks || []).map((track: any) => {
+                return this.createTrack(track);
+            });
+        });
+    }
+
+    getAlbumsForArtist(artistId: string): Promise<AlbumData[]> {
+        return this.sendRequestToExpress(
+            '/artist-albums/' + encodeURIComponent(artistId)
+        ).then((data) => {
+            return (data.items || []).map((album: any) => {
+                return this.createAlbum(album);
+            });
+        });
+    }
+
+    getAlbum(albumId: string): Promise<AlbumData> {
+        return this.sendRequestToExpress(
+            '/album/' + encodeURIComponent(albumId)
+        ).then((data) => this.createAlbum(data));
+    }
+
+    getTracksForAlbum(albumId: string): Promise<TrackData[]> {
+        return this.sendRequestToExpress(
+            '/album-tracks/' + encodeURIComponent(albumId)
+        ).then((data) => {
+            return (data.items || []).map((track: any) => {
+                return this.createTrack(track);
+            });
+        });
+    }
+
+    getTrack(trackId: string): Promise<TrackData> {
+        return this.sendRequestToExpress(
+            '/track/' + encodeURIComponent(trackId)
+        ).then((data) => this.createTrack(data));
+    }
+
+    getPlaybackToken(): Promise<string> {
+        return this.sendRequestToExpress('/playback-token').then((data) => {
+            return data.access_token;
+        });
+    }
+
+    transferPlayback(deviceId: string): Promise<any> {
+        return firstValueFrom(this.http.put(
+            this.expressBaseUrl + '/playback/transfer',
+            { device_id: deviceId },
+            { withCredentials: true }
+        ));
+    }
 }

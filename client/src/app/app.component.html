@@ -1,13 +1,11 @@
-<nav class="navbar navbar-expand-lg bg-dark sticky-top">
-  <ul class="navbar-nav mr-auto">
-    <li class="nav-item navbar-brand">
-      <a class="navbar-brand" href="/">
-        Browsing spotify
-      </a>
-    </li>
-  </ul>
-  <a type="button" class="btn btn-light" href="http://127.0.0.1:8888/login">Log in</a>
+<nav class="navbar navbar-expand navbar-dark bg-dark sticky-top" aria-label="Primary navigation">
+    <div class="container">
+        <a class="navbar-brand" routerLink="/">Browsing Spotify</a>
+        <div class="navbar-nav ms-auto">
+            <a class="btn btn-success" href="http://127.0.0.1:8888/login">Log in with Spotify</a>
+        </div>
+    </div>
 </nav>
-<main class="container-fluid">
-<router-outlet></router-outlet>
+<main class="container">
+    <router-outlet></router-outlet>
 </main>

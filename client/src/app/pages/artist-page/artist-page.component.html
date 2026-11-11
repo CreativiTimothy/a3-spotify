@@ -1,28 +1,65 @@
-@if(artist) {
-	<div class="row">
-		<div class="col-xl-4 col-12">
-			<!--TODO: populate with artist name-->
-			<h1></h1>
-			<!--TODO: populate with artist image URL-->
-			<img id="artistImg" src="assets/unknown.jpg">
-			<p>
-				<!--TODO: link to artist page on spotify, display artist name-->
-				<a class="btn btn-light" role="button" target="_blank">Open ??? on Spotify</a>
-			</p>
-		</div>
-		<div class="col-xl-4 col-12">
-			<h3>Popularity</h3>
-			<!--TODO: display the number of followers, formatted with commas for thousands/millions-->
-			<p>??? followers</p>
-			<app-thermometer [popularity]="artist.popularity"></app-thermometer>
-			<!--TODO: display artist name-->
-			<h3>???'s Albums</h3>
-			<!--TODO: Display a carousel component for the artist's albums. Bind carousel's resources and give it a static carouselId.-->
-		</div>
-		<div class="col-xl-4 col-12">
-			<!--TODO: display artist name-->
-			<h3>???'s Top Tracks</h3>
-			<!--TODO: display the artist's top tracks-->
-		</div>
-	</div>
+@if (artist) {
+    <!--
+        The desktop layout uses three columns so the artist, albums, and tracks
+        remain visible at the same time. Bootstrap and the component CSS stack
+        the sections at narrower screen widths.
+    -->
+    <div class="artist-dashboard">
+        <section class="artist-summary" aria-labelledby="artistName">
+            <h1 id="artistName">{{ artist.name }}</h1>
+
+            <img
+                id="artistImg"
+                [src]="artist.imageURL"
+                [alt]="artist.name">
+
+            <a
+                class="btn btn-light artist-link"
+                [href]="artist.url"
+                target="_blank"
+                rel="noopener noreferrer">
+                Open {{ artist.name }} on Spotify
+            </a>
+        </section>
+
+        <section class="artist-albums" aria-labelledby="albumsHeading">
+            <h2>Popularity</h2>
+            <p class="followers">{{ artist.followersStr }} followers</p>
+
+            <app-thermometer
+                label="Popularity"
+                [popularity]="artist.popularity">
+            </app-thermometer>
+
+            <h2 id="albumsHeading" class="section-heading">
+                {{ artist.name }}'s Albums
+            </h2>
+
+            @if (albums.length > 0) {
+                <app-carousel
+                    carouselId="artistAlbums"
+                    [resources]="albums">
+                </app-carousel>
+            } @else {
+                <p class="empty-message">No albums are available.</p>
+            }
+        </section>
+
+        <section class="artist-tracks" aria-labelledby="tracksHeading">
+            <h2 id="tracksHeading">{{ artist.name }}'s Top Tracks</h2>
+
+            @if (topTracks.length > 0) {
+                <app-track-list
+                    [tracks]="topTracks"
+                    [hideArtist]="true">
+                </app-track-list>
+            } @else {
+                <p class="empty-message">No top tracks are available.</p>
+            }
+        </section>
+    </div>
+}
+
+@if (errorMessage) {
+    <p class="alert alert-warning" role="alert">{{ errorMessage }}</p>
 }

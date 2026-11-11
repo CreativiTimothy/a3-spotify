@@ -1,12 +1,21 @@
-<h1>Search Spotify</h1>
-<!--TODO: bind input's model to searchString-->
-<input>
-<!--TODO: bind select's model to searchCategory-->
-<select>
-	<!--TODO: loop over searchCategories to create dropdown options-->
-	<!--populate body and text value https://www.w3schools.com/tags/att_option_selected.asp-->
-</select>
-<!--TODO: Call search function when the button is clicked-->
-<button class="btn btn-light">Search</button>
-<!--TODO: Display a carousel component if searching for an artist or album. Bind carousel's resources and give it a static carouselId.-->
-<!--TODO: Display a track-list component if searching for a track. Bind track-list's tracks.-->
+<section aria-labelledby="searchHeading">
+    <h1 id="searchHeading">Search Spotify</h1>
+    <form (ngSubmit)="search()" class="search-controls">
+        <label for="searchText" class="visually-hidden">Search text</label>
+        <input id="searchText" class="form-control" name="searchText" [(ngModel)]="searchString" placeholder="Search Spotify" required>
+        <label for="searchCategory" class="visually-hidden">Resource type</label>
+        <select id="searchCategory" class="form-select" name="searchCategory" [(ngModel)]="searchCategory">
+            @for (category of searchCategories; track category) { <option [value]="category">{{ category }}</option> }
+        </select>
+        <button class="btn btn-light" type="submit" [disabled]="loading">{{ loading ? 'Searching...' : 'Search' }}</button>
+    </form>
+
+    @if (errorMessage) { <p class="text-warning" role="alert">{{ errorMessage }}</p> }
+    @if (!loading && resources.length === 0 && searchString.trim()) { <p>No results yet.</p> }
+    @if (resources.length > 0 && searchCategory !== 'track') {
+        <app-carousel carouselId="searchResults" [resources]="resources"></app-carousel>
+    }
+    @if (resources.length > 0 && searchCategory === 'track') {
+        <app-track-list [tracks]="trackResults"></app-track-list>
+    }
+</section>

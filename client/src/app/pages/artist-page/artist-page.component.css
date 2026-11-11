@@ -1,7 +1,84 @@
-#artistImg {
-	max-width: 400%;
+/*
+ * Large screens use three columns like the assignment example. minmax(0, 1fr)
+ * lets the table shrink inside its column instead of forcing horizontal overflow.
+ */
+.artist-dashboard {
+    display: grid;
+    grid-template-columns: minmax(230px, 0.85fr) minmax(280px, 1fr) minmax(420px, 1.35fr);
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    align-items: start;
 }
 
-app-artist {
-	vertical-align: middle;
+.artist-summary,
+.artist-albums,
+.artist-tracks {
+    min-width: 0;
+}
+
+#artistImg {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.artist-link {
+    margin-top: 0.75rem;
+}
+
+.followers {
+    margin-bottom: 0.5rem;
+    color: #d6d6d6;
+}
+
+.section-heading {
+    margin-top: 1.25rem;
+}
+
+.artist-albums app-carousel {
+    display: block;
+    width: 100%;
+}
+
+.artist-tracks {
+    overflow: hidden;
+}
+
+.empty-message {
+    padding: 1rem;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+}
+
+/*
+ * Medium windows use two columns. The track table moves below the artist and
+ * album sections, where the table has enough horizontal space to remain usable.
+ */
+@media (max-width: 1199.98px) {
+    .artist-dashboard {
+        grid-template-columns: minmax(240px, 0.8fr) minmax(300px, 1.2fr);
+    }
+
+    .artist-tracks {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Small windows stack all content in a single readable column. */
+@media (max-width: 767.98px) {
+    .artist-dashboard {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+    }
+
+    .artist-tracks {
+        grid-column: auto;
+    }
+
+    #artistImg {
+        max-width: 100%;
+    }
 }

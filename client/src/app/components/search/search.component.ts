@@ -1,30 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SpotifyService } from '../../services/spotify.service';
-import { ArtistData } from '../../data/artist-data';
-import { AlbumData } from '../../data/album-data';
-import { TrackData } from '../../data/track-data';
 import { ResourceData } from '../../data/resource-data';
+import { TrackData } from '../../data/track-data';
 
-@Component({
-    selector: 'app-search',
-    templateUrl: './search.component.html',
-    styleUrls: ['./search.component.css'],
-    providers: [SpotifyService],
-    standalone: false
-})
-export class SearchComponent implements OnInit {
-  searchString:string;
-  searchCategory:string = 'artist';
-  searchCategories:string[] = ['artist', 'album', 'track'];
-  resources:ResourceData[];
+@Component({ selector: 'app-search', templateUrl: './search.component.html', styleUrls: ['./search.component.css'], standalone: false })
+export class SearchComponent {
+    searchString: string = '';
+    searchCategory: string = 'artist';
+    searchCategories: string[] = ['artist', 'album', 'track'];
+    resources: ResourceData[] = [];
+    loading: boolean = false;
+    errorMessage: string = '';
 
-  constructor(private spotifyService:SpotifyService) { }
+    constructor(private spotifyService: SpotifyService) {
+    }
 
-  ngOnInit() {
-  }
+    search(): void {
+        const query = this.searchString.trim();
+        if (!query) {
+            this.resources = [];
+            return;
+        }
+        this.loading = true;
+        this.errorMessage = '';
+        this.spotifyService.searchFor(this.searchCategory, query).then((resources) => {
+            this.resources = resources;
+        }).catch(() => {
+            this.resources = [];
+            this.errorMessage = 'Search failed. Make sure the webserver is running.';
+        }).finally(() => {
+            this.loading = false;
+        });
+    }
 
-  search() {
-    //TODO: call search function in spotifyService and parse response
-  }
-
+    get trackResults(): TrackData[] {
+        return this.resources as TrackData[];
+    }
 }

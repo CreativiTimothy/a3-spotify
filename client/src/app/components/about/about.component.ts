@@ -1,25 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SpotifyService } from '../../services/spotify.service';
 
-@Component({
-    selector: 'app-about',
-    templateUrl: './about.component.html',
-    styleUrls: ['./about.component.css'],
-    standalone: false
-})
-export class AboutComponent implements OnInit {
-  name:string = null;
-  profile_pic:string = "assets/unknown.jpg";
-  profile_link:string = null;
+@Component({ selector: 'app-about', templateUrl: './about.component.html', styleUrls: ['./about.component.css'], standalone: false })
+export class AboutComponent {
+    name: string = '';
+    profile_pic: string = 'assets/unknown.jpg';
+    profile_link: string = '';
+    loading: boolean = false;
+    errorMessage: string = '';
 
+    constructor(private spotifyService: SpotifyService) {
+    }
 
-  //TODO: inject the Spotify service
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-   /*TODO: create a function which gets the "about me" information from Spotify when the button in the view is clicked.
-  In that function, update the name, profile_pic, and profile_link fields */
-
+    loadAboutMe(): void {
+        this.loading = true;
+        this.errorMessage = '';
+        this.spotifyService.aboutMe().then((profile) => {
+            this.name = profile.name;
+            this.profile_pic = profile.imageURL;
+            this.profile_link = profile.spotifyProfile;
+        }).catch(() => {
+            this.errorMessage = 'Unable to load profile information. Make sure the webserver is running.';
+        }).finally(() => {
+            this.loading = false;
+        });
+    }
 }

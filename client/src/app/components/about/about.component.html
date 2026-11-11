@@ -1,10 +1,17 @@
-<!--TODO: Define click callback to load about me information-->
-<button class="btn btn-light">Load info about me</button>
-<!--TODO: replace ??? to bind to name-->
-<h3>Logged in user: ???</h3>
-<!--TODO: bind img src's to profile_pic-->
-<img src="assets/unknown.jpg" class="profile">
-<p>
-	<!--TODO: bind link's href to profile_link-->
-	<a class="btn btn-light" target="_blank">Open profile on Spotify</a>	
-</p>
+<section aria-labelledby="aboutHeading">
+    <h1 id="aboutHeading">About</h1>
+    <button class="btn btn-light" type="button" (click)="loadAboutMe()" [disabled]="loading">
+        {{ loading ? 'Loading...' : 'Load info about me' }}
+    </button>
+
+    @if (name) {
+        <div class="profile-card">
+            <img [src]="profile_pic" [alt]="name + ' Spotify profile image'">
+            <h2>Logged in user: {{ name }}</h2>
+            <a class="btn btn-outline-light" [href]="profile_link" target="_blank" rel="noopener noreferrer">
+                Open profile on Spotify
+            </a>
+        </div>
+    }
+    @if (errorMessage) { <p class="text-warning" role="alert">{{ errorMessage }}</p> }
+</section>

@@ -1,23 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
-
-body {
-	background-color: var(--dark);
-	color: var(--light);
-	font-family: 'Lato', sans-serif;
+:root {
+    --dark: #212529;
+    --light: #f8f9fa;
+    --orange: #ff7a45;
 }
-
-h1 {
-	font-weight: 900;
-}
-
-h2, h3 {
-	font-weight: 700;
-}
-
-button, .btn {
-	margin: 10px;
-}
-
-a {
-	color: var(--orange);
-}
+body { font-family: Lato, sans-serif; background: #121212; color: var(--light); }
+h1, h2, h3 { font-weight: 900; }
+a { color: var(--orange); }
+a:hover, a:focus { color: #ffad8c; }
+button, .btn { margin: 0.25rem; }
+main.container { padding-bottom: 2rem; }
+.table { --bs-table-color: #f8f9fa; --bs-table-bg: transparent; --bs-table-hover-color: #fff; --bs-table-hover-bg: rgba(255,255,255,.08); }
