@@ -1,4 +1,67 @@
-.progress {
-	margin: 10px;
-	height: 20px;
+/* Keep the track page within the viewport and let Bootstrap stack it on small screens. */
+.track-page {
+    max-width: 1320px;
+}
+
+.track-summary,
+.track-details {
+    min-width: 0;
+}
+
+.track-image {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.track-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.track-metadata {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.detail-block {
+    min-width: 0;
+}
+
+.detail-block h2 {
+    margin-bottom: 0.5rem;
+}
+
+.detail-block p,
+.artist-list {
+    margin-bottom: 0;
+}
+
+.artist-list {
+    padding-left: 1.25rem;
+}
+
+.popularity-section {
+    width: 100%;
+}
+
+@media (max-width: 991.98px) {
+    .track-image {
+        max-width: 620px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .track-metadata {
+        grid-template-columns: 1fr;
+    }
+
+    .track-page h1 {
+        font-size: clamp(2rem, 10vw, 3rem);
+    }
 }

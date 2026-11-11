@@ -12,7 +12,7 @@ import { Popularity } from '../data/popularity';
 export class SpotifyService {
     expressBaseUrl: string = 'http://127.0.0.1:8888';
 
-    /* false: instructor dummy server. true: real Spotify webserver. */
+    /* false: Canvas dummy server. true: real Spotify webserver. */
     useSpotifySession: boolean = true;
 
     constructor(private http: HttpClient) {
@@ -222,6 +222,18 @@ export class SpotifyService {
         return firstValueFrom(this.http.put(
             this.expressBaseUrl + '/playback/transfer',
             { device_id: deviceId },
+            { withCredentials: true }
+        ));
+    }
+
+
+    playTrack(deviceId: string, spotifyUri: string): Promise<any> {
+        return firstValueFrom(this.http.put(
+            this.expressBaseUrl + '/playback/play',
+            {
+                device_id: deviceId,
+                spotify_uri: spotifyUri
+            },
             { withCredentials: true }
         ));
     }

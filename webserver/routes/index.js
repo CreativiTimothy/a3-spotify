@@ -212,4 +212,31 @@ router.put('/playback/transfer', async function (req, res, next) {
     }
 });
 
+router.put('/playback/play', async function (req, res, next) {
+    try {
+        if (!req.body.device_id || !req.body.spotify_uri) {
+            return res.status(400).json({
+                error: 'device_id and spotify_uri are required'
+            });
+        }
+
+        await spotifyRequest(
+            req,
+            'https://api.spotify.com/v1/me/player/play?device_id=' +
+                encodeURIComponent(req.body.device_id),
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    uris: [req.body.spotify_uri]
+                })
+            }
+        );
+
+        res.status(204).end();
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = router;

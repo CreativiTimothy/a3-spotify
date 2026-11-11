@@ -1,0 +1,31 @@
+<section class="player mt-4" aria-labelledby="playerHeading">
+    <h2 id="playerHeading">Spotify Player</h2>
+    <p aria-live="polite">{{ status }}</p>
+
+    @if (!ready) {
+        <button
+            class="btn btn-success"
+            type="button"
+            (click)="connect()"
+            [disabled]="connecting">
+            {{ connecting ? 'Connecting...' : 'Connect player' }}
+        </button>
+    }
+
+    @if (ready) {
+        <button
+            class="btn btn-success"
+            type="button"
+            (click)="playSelectedTrack()"
+            [disabled]="playingSelectedTrack || !spotifyUri">
+            {{ playingSelectedTrack ? 'Starting...' : 'Play' }}
+        </button>
+
+        <button
+            class="btn btn-outline-light"
+            type="button"
+            (click)="togglePlayback()">
+            {{ paused ? 'Resume' : 'Pause' }}
+        </button>
+    }
+</section>

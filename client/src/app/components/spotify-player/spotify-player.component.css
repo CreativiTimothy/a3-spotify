@@ -1,0 +1,30 @@
+/* The player stays inside its Bootstrap column and wraps controls on narrow screens. */
+:host {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+.player {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    overflow-wrap: anywhere;
+}
+
+.player h2 {
+    margin-bottom: 0.75rem;
+}
+
+.player .btn {
+    margin: 0.25rem 0.5rem 0.25rem 0;
+}
+
+@media (max-width: 575.98px) {
+    .player .btn {
+        width: 100%;
+        margin-right: 0;
+    }
+}
